@@ -18,7 +18,7 @@ You see the difference,
 
 ![image](https://github.com/zkrguan/Container_and_Docker/assets/97544709/507d3a46-2372-4b7e-845d-a21174462972)
 
-## Docker
+## Docker Concepts
 
 ### What is Docker?
 
@@ -122,3 +122,202 @@ This is a GUI app to manage docker on Windows or Mac.
 Docker Destop includes docker engine, docker cli, and docker-compose cli. 
 
 Helps manage resources like containers, images, and volumes. 
+
+## Docker Scripts
+
+### 
+
+
+
+## docker commands
+
+
+### A basic run with options
+
+docker run will go the docker hub
+
+find the image you are trying to run
+
+download it and build a container based on the image
+
+then finally start running that image
+
+for example:
+
+```bash
+# https://docs.docker.com/engine/reference/builder/
+# --name If the name is not specified, then docker will generate a name for this with some random strings.
+# -- for the long version and - for the short version
+# -i is for interactive container, so you could run commands in the 
+docker run -i -t --name test ubuntu
+
+```
+
+![image](https://github.com/zkrguan/Container_and_Docker/assets/97544709/de6b63e2-725c-4e44-8d86-ed4d10e6c891)
+
+You will also notice that from the docker desktop -> container 
+
+There is a container running on the host machine. 
+
+![image](https://github.com/zkrguan/Container_and_Docker/assets/97544709/46387b22-795e-4fc1-acb6-efcc55af8c63)
+
+When you type exit, you exited out from the ubuntu.
+
+![image](https://github.com/zkrguan/Container_and_Docker/assets/97544709/be5df19c-36ad-423c-bdac-d39e075a5ad1)
+
+Accordingly, inside the docker desktop -> container 
+
+![image](https://github.com/zkrguan/Container_and_Docker/assets/97544709/e60270bc-bd18-4806-ab09-c60380ace18e)
+
+### A docker run with options, commands and arguments
+
+```bash
+
+ docker run -it --name test ubuntu echo "I am now sending args and commands into the Ubuntu container"
+
+```
+
+![image](https://github.com/zkrguan/Container_and_Docker/assets/97544709/c026a62f-9caf-4b1c-b2e1-7b8266a99a6d)
+
+### A docker run with auto cleaning container after the command runs
+
+```bash
+
+docker run --rm -it ubuntu
+
+```
+
+![image](https://github.com/zkrguan/Container_and_Docker/assets/97544709/817243b2-64c8-4978-bd9b-04f312dbaa6d)
+
+Cleaned as you expected
+
+![image](https://github.com/zkrguan/Container_and_Docker/assets/97544709/c1cc6970-871a-4273-a229-a91f268917c5)
+
+### A docker run with httpd server
+
+```
+
+docker run --rm httpd
+
+```
+notice this is not working as you expected because this is a daemon process.
+
+You could not interact with it.
+
+![image](https://github.com/zkrguan/Container_and_Docker/assets/97544709/5bb8684e-8585-4ad2-865f-52ebf00e2697)
+
+How to run this thing at the backgroud?
+
+```bash
+
+docker run -d --rm httpd
+
+```
+
+![image](https://github.com/zkrguan/Container_and_Docker/assets/97544709/402c3694-ef2f-4eed-a919-b760fd9fcca5)
+
+nice but how would I know if it running? Using some ubuntu ish docker commands like 
+
+```bash
+
+docker ps
+
+```
+
+![image](https://github.com/zkrguan/Container_and_Docker/assets/97544709/4bacd61a-f341-4323-a06e-6a018f902ebe)
+
+and you could use docker commands to check a container's log
+
+```bash
+
+docker logs 136ccccfa4e98654436f3f8237ea81cb2a9d658d4c53ccb36d9e96e474305b61
+
+```
+
+you could use docker id or docker auto-assigned name
+
+![image](https://github.com/zkrguan/Container_and_Docker/assets/97544709/e3077529-f766-41d1-8dd4-5e1add39c4ee)
+
+Now it is the time to stop the container by using docker command. 
+
+```bash
+
+docker kill dockerId
+
+```
+
+But remember this is a server you could not interact with it by using http request. So how to make it work?
+
+### Making a server container running on a port
+
+-p meaning publish the port on the host 
+
+the port in the host device : the port in the container
+
+So you are binding the host's 8080 with the container's 80 as the below example shows
+
+```bash
+
+docker run --rm --name apache_server -p 8080:80 -d httpd
+
+```
+
+Now see if it is running as expected:
+
+![image](https://github.com/zkrguan/Container_and_Docker/assets/97544709/9c884fdf-ab09-4781-a518-bd9a7571d86e)
+
+![image](https://github.com/zkrguan/Container_and_Docker/assets/97544709/b7d163dc-eea3-4e3c-8f2e-a6db205147ec)
+
+### sending a command to the running container 
+
+This will need you to use docker exec -it id/name
+
+```bash
+
+docker exec -it fb3a675e727caff76691229ebbd8fbd0c5d7a4ae4e05d1c602b6751b661cbc12 bash
+
+
+```
+
+I told that server to open a new shell for me
+
+![image](https://github.com/zkrguan/Container_and_Docker/assets/97544709/ba178719-ad79-4dba-8740-245de6e43550)
+
+So stuff you could do on this apache server
+
+![image](https://github.com/zkrguan/Container_and_Docker/assets/97544709/4f04a10c-a48b-4a72-bdc6-18e2618fe9f2)
+
+And you got this
+
+![image](https://github.com/zkrguan/Container_and_Docker/assets/97544709/30a347a5-3ac6-4562-abf7-e4a566b44a5f)
+
+### Or even sending a file to container
+
+just like how you create a file in the other systems by using VS code
+
+![image](https://github.com/zkrguan/Container_and_Docker/assets/97544709/e6e70124-a5d8-4bb1-b520-991c9d54daa1)
+
+[image](https://github.com/zkrguan/Container_and_Docker/assets/97544709/111b9175-eed5-42c1-87c1-913aadd2d799)
+
+now the trick comes
+
+docker run --rm --name apache_server -p 80:80 -v path/in/host:/path/in/container -d httpd
+
+for example:
+
+```bash
+
+docker run --rm --name apache_server -p 80:80 -v /home/zkrguan/sample/sample.html:/usr/local/apache2/htdocs/ -d httpd
+
+
+```
+
+run the command with lil trouble shooting
+
+![image](https://github.com/zkrguan/Container_and_Docker/assets/97544709/6f01dc94-3136-4a78-b170-88b4a793710e)
+
+It is like binding the path with host and the container
+
+![image](https://github.com/zkrguan/Container_and_Docker/assets/97544709/5e8c137a-9508-46c7-98e3-35ff0c8ec9b8)
+
+
