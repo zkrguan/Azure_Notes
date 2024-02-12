@@ -598,6 +598,3 @@ EXPOSE 1234 : 1234
 
 ```
 
-Sometimes, the third party packages could have conflicts with the other packages. No easy way, you have to search for the solutions. 
-
-3. 
