@@ -536,3 +536,68 @@ docker build .
 docker build -f Dockerfile.debug ../docker
 
 
+
+### A full walk through example of the dockerize a project:
+
+1. You have to think about what to write down on the .dockerignore
+
+The general rule is 
+
+whatever you need for developement 
+
+and 
+
+whatever generated contents 
+
+should be in the .dockerignore file
+
+2. Moving onto the Dockerfile
+
+```
+# 1. BASE IMAGE, STICK WITH A SPECIFIC VERSION 
+FROM node:version code
+
+# 2. Label for recording your author's information and more
+
+LABEL maintainer="Zhaokai Guan <zkrguan@gmail.com>" \
+      description="My notes about how to write dockerfile"
+
+# 3. Define env vairables
+
+ENV NPM_CONFIG_LOGLEVEL=warning \
+
+# 4. Where to put the work in the image?
+
+# I put everything into the app
+# This is like create folder and then cd into
+WORKDIR /app
+
+# 5. copy the package information over to the work dir
+
+COPY package*
+
+# 6. install the packages from the list and move the source code files into the image
+
+RUN npm ci
+
+COPY . .
+
+# 7. npm run build
+
+RUN npm run build
+
+# 8. run the application
+
+CMD npm run serve
+
+# 9. EXPOSE the port to the Public
+
+EXPOSE 1234 : 1234
+
+(left is the local right is the container's)
+
+```
+
+Sometimes, the third party packages could have conflicts with the other packages. No easy way, you have to search for the solutions. 
+
+3. 
