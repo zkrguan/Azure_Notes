@@ -598,3 +598,136 @@ EXPOSE 1234 : 1234
 
 ```
 
+
+## Optimize docker
+
+### size
+
+#### alpine linux -> the smallest linux I know
+
+This thing is only 5 mb in size. Because they use busybox, musl and more to save space. 
+
+A lot of public images have the alpines in the tags too, meaning they could run in alpine. 
+
+You need to use apk in alpine (not yum anymore)
+
+![image](https://github.com/zkrguan/Container_and_Docker/assets/97544709/4645ca26-f2f4-4645-81ba-b0150cfebe4a)
+
+
+### Version code
+
+Always be explicit to the version code of the dependencies you want 
+
+for example:
+
+![image](https://github.com/zkrguan/Container_and_Docker/assets/97544709/01df8a3a-7b29-438e-96dd-67595ed48b1a)
+
+The bottom one is most precise one. 
+
+But why you want to do this? Because the version changes might break your running code. 
+
+Okay, but why the bottom one? Most secure way to define the dependency. The hash meaning I just want this image from the offical specifically. So if hackers have another version of fake node image publish, I won't get the bait because it has a different hash. 
+
+Work flow is like while dev using the loose way to express like the top, and all the way goes to the bottom until you chose a proper version of the dependency image. 
+
+### Design the layers
+
+#### The least frequently changing layers go ealier. 
+
+For example: OS, tools, depdencies, source code, build/run
+
+Most commands create temp layers (like ENV, WORKDIR )
+
+Docker resuses existing layers whenever it can. It will look at the check 
+
+### RUN, COPY create cacheable, reusable layers. 
+
+![image](https://github.com/zkrguan/Container_and_Docker/assets/97544709/850b3c29-19dc-45f5-8d09-44c112634241)
+
+This is like installing everything in one command, and then remove the cache if there is any. 
+
+So intallation process make use of the dependency if there is any.
+
+### Multi-stage builds
+
+Docker images tend to get big fast because of the dependency accumulations. 
+
+However, you could have multi-stages build to collect the generated part from one stage and remove all the unneeded stuff of each layer. 
+
+Simple example:
+
+Sometimes, a visual separation is helpful for coders to think stages.
+
+![image](https://github.com/zkrguan/Container_and_Docker/assets/97544709/e598316e-dcac-43e2-80fc-1bbd9578e0fe)
+
+Upper part is getting ready for the node
+
+Bottom part is take that ready node files from the dependencies stage. 
+
+And afterwards, the dependencies layer will be thrown away.
+
+### Dev VS Production
+
+stuff like type-script, eslint, nodemon you only need them in the development. 
+
+So how to install then? 
+
+npm install => This will install everything. 
+
+npm install --production or NODE_ENV=production npm install
+
+npm ci --production => Best solution
+
+NODE_ENV=production will help server generate less logging and express will enable caching. 
+
+So put the NODE_ENV into the .env file. 
+
+### security
+
+You want to run the container application with the least previllages possible. 
+
+
+WORKDIR /app -> make the work dir.
+
+COPY --chown=node:node ./app -> Switching the files owner from the root to the user node under group node
+
+USER node -> swithcing the current user from root to node
+
+CMD npm Start -> start running server under user node. 
+
+
+### init process 
+
+The stuff learned from UNIX sytem programming is super useful here. 
+
+You could use third part like dumb-init and tini.
+
+You have to install them, then the 
+
+![image](https://github.com/zkrguan/Container_and_Docker/assets/97544709/86b0a2ed-9a22-40ee-97a2-65bcf11295d0)
+
+And now the tini is embeeded with Dockers now, so you could use 
+
+```docker
+
+docker run --init 
+
+```
+
+### health check command:
+
+Web server has a health check route, so does the docker application. 
+
+But think about it, you need to keep talking to the health check route to confirm the route is healthy. 
+
+Docker now embeded with the HEALTHCHECK
+
+![image](https://github.com/zkrguan/Container_and_Docker/assets/97544709/1d53424c-a924-4b11-adcc-36e0235851a0)
+
+
+### Implement All these advice from the docker veteran 
+
+![image](https://github.com/zkrguan/Container_and_Docker/assets/97544709/c10afd42-fbef-4bc0-addf-b027ea5809b4)
+
+
+
