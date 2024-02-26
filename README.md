@@ -730,4 +730,15 @@ Docker now embeded with the HEALTHCHECK
 ![image](https://github.com/zkrguan/Container_and_Docker/assets/97544709/c10afd42-fbef-4bc0-addf-b027ea5809b4)
 
 
+## Docker Registries
+
+Docker Hub is the default docker registry when we use those docker commit\push ... commands.
+
+But you could use ECR by AWS or other registry services. 
+
+Or even host your own registry, so you can have everything under control.
+
+This is like a git repo can be uploaded to github or gitlab. 
+
+
 
